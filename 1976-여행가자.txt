@@ -1,0 +1,82 @@
+#include<iostream>
+using namespace std;
+
+int cities[1010];
+int getParent(int parent[], int x);
+void unionParent(int parent[], int a, int b);
+int findParent(int parent[], int a, int b);
+
+int main() {
+	cin.tie(NULL);
+	ios::sync_with_stdio(false);
+
+	int n, m;
+	int parent[210];	// 도시들을 담을 parent배열 선언
+
+	// 도시의 수와 여행계획에 속한 도시들의 수를 받고 행렬 형태의 도시 정보를 받음
+	int connected;
+	cin >> n >> m;
+
+	// parent 배열 초기화
+	for (int i = 1; i <= n; i++) {
+		parent[i] = i;
+	}
+
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			cin >> connected;
+			if (connected == 1) {		// 두 도시가 연결되어 있다면 부모를 합침
+				unionParent(parent, i, j);
+			}
+		}
+	}
+	// 여행 계획에 있는 도시들을 받음
+	int input;
+	for (int i = 1; i <= m; i++) {
+		cin >> input;
+		cities[i] = input;
+	}
+
+	// 여행 계획 안에 있는 도시들의 부모가 모두 같은지 확인. 모두 같지 않다면 NO를 출력
+	for (int i = 1; i <= m - 1; i++) {
+		if (!findParent(parent, cities[i], cities[i + 1])) {
+			cout << "NO\n";
+			return 0;
+		}
+	}
+	cout << "YES\n";
+	return 0;
+}
+
+int getParent(int parent[], int x) {
+	if (parent[x] == x) {
+		return x;
+	}
+	else {
+		return parent[x] = getParent(parent, parent[x]);
+	}
+}
+
+void unionParent(int parent[], int a, int b) {
+	a = getParent(parent, a);
+	b = getParent(parent, b);
+
+	if (a < b) {
+		parent[b] = a;
+	}
+	else {
+		parent[a] = b;
+	}
+}
+
+int findParent(int parent[], int a, int b) {
+	a = getParent(parent, a);
+	b = getParent(parent, b);
+
+	if (a == b) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
