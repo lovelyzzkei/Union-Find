@@ -1,0 +1,81 @@
+#include<iostream>
+#include<algorithm>
+#define MAX 1001
+using namespace std;
+
+int getParent(int parent[], int x);
+void unionParent(int parent[], int a, int b);
+bool findParent(int parent[], int a, int b);
+
+int main() {
+	cin.tie(NULL);
+	ios::sync_with_stdio(false);
+
+	// 정점의 개수와 간선의 개수를 받음
+	int n, m;
+	cin >> n >> m;
+
+	// parent 배열을 정점의 개수만큼 자기 자신을 부모로 하여 초기화
+	int parent[MAX];
+	for (int i = 1; i <= n; i++) {
+		parent[i] = i;
+	}
+
+	// 간선의 정보를 받음. 그리고 간선의 양 끝점이 연결되어있기 때문에 부모 합침
+	int u, v;
+	for (int i = 0; i < m; i++) {
+		cin >> u >> v;
+		unionParent(parent, u, v);
+	}
+
+	// 부모 확인 작업
+	for (int i = 1; i <= n; i++) {
+		parent[i] = getParent(parent, i);
+	}
+
+	// counting하기 위한 정렬
+	sort(parent + 1, parent + n + 1);
+
+	// 연결요소의 개수를 findParent함수를 통하여 구함
+	int count = 1;
+	for (int i = 1; i < n; i++) {
+		if (parent[i] != parent[i + 1]) {
+			count++;
+		}
+	}
+	cout << count << "\n";
+	return 0;
+}
+
+int getParent(int parent[], int x) {
+	if (parent[x] == x) {
+		return x;
+	}
+	else {
+		parent[x] = getParent(parent, parent[x]);
+	}
+}
+
+void unionParent(int parent[], int a, int b) {
+	a = getParent(parent, a);
+	b = getParent(parent, b);
+
+	if (a < b) {
+		parent[b] = a;
+	}
+	else {
+		parent[a] = b;
+	}
+}
+
+bool findParent(int parent[], int a, int b) {
+	a = getParent(parent, a);
+	b = getParent(parent, b);
+
+	if (a == b) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
